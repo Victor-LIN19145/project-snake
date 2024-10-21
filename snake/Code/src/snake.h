@@ -12,9 +12,9 @@
 #define BODY_TEXTURE_D "./Assets/snake_body_default.png"
 #define TAIL_TEXTURE_D "./Assets/snake_tail_default.png"
 
-#define HEAD_TEXTURE "./Assets/snake_head_minecraft.png"
-#define BODY_TEXTURE "./Assets/snake_body_minecraft.png"
-#define TAIL_TEXTURE "./Assets/snake_tail_minecraft.png"
+#define HEAD_TEXTURE_M "./Assets/snake_head_minecraft.png"
+#define BODY_TEXTURE_M "./Assets/snake_body_minecraft.png"
+#define TAIL_TEXTURE_M "./Assets/snake_tail_minecraft.png"
 
 typedef struct SSnakeSegment
 {
@@ -30,7 +30,6 @@ typedef struct SSnake
     unsigned int size;
     struct SSnakeSegment* head;
     struct SSnakeSegment* tail;
-	void (*destroy)(void*);
 }Snake;
 
 Snake* CreateSnake();

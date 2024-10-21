@@ -4,6 +4,7 @@
 #include <stdio.h>
 
 #include "snake.h"
+#include "game.h"
 
 // Function to create a new snake segment
 Snake* CreateSnake()

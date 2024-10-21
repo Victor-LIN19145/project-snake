@@ -6,7 +6,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -17,9 +17,8 @@ int main(void)
 
     Snake* snake = CreateSnake();
     InitSnake(snake);
-    //Game* game = CreateGame();
-    //DrawGrid(game);
-    AddSegment(snake);
+    Game* game = CreateGame();
+    InitGame(game);
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -38,7 +37,6 @@ int main(void)
         BeginDrawing();
 
             ClearBackground(green);
-
             DrawSnake(snake);
             DrawText("Congrats! You created your first window!", 190, 200, 20, LIGHTGRAY);
 

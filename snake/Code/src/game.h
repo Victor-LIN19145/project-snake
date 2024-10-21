@@ -5,28 +5,51 @@
 
 #include "snake.h"
 
-#define GRID_TEXTURE "./Assets/apple.png"
-#define APPLE_TEXTURE "./Assets/grid_tile.png"
+#define X_CASES 1280
+#define Y_CASES 960
+#define SLOT_SIZE 32
 
-typedef struct SGame
+#define GRID_TEXTURE "./Assets/grid_tile.png"
+#define APPLE_TEXTURE "./Assets/apple.png"
+
+typedef struct SPlayer
 {
     //
-}Game;
+}Player;
 
 typedef struct SApple
 {
     Vector2 pos;
-    Texture2D texture;
 }Apple;
 
+typedef struct SGame
+{
+    Player* player;
+    Apple* apple;
 
-//Game* CreateGame();
+    //GameScreen gameScreen;
+    int score;
+    bool isGameOver;
+    bool isPaused;
 
-//void InitGame(Game* game);
+    Texture2D gridTexture;
+}Game;
 
-//void UpdateGame(Game* game);
+Game* CreateGame();
 
-//void DrawGrid(Game* game);
+Game* CreatePlayer();
+
+Game* CreateApple();
+
+void InitGame(Game* game);
+
+void UpdateGame(Game* game);
+
+void AppleUpdate(Game* game);
+
+void DrawGameGrid(Texture2D gridTexture);
+
+void DrawGame(Game* game);
 
 void DrawApple(Apple* apple);
 
