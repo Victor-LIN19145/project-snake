@@ -140,38 +140,31 @@ void UpdateSnake(Snake* snake)
 
     const int screenWidth = 1280;
     const int screenHeight = 960;
-    for ( SnakeSegment* current = snake->head; current != NULL; current = current->next)
+    for (SnakeSegment* current = snake->head; current != NULL; current = current->next)
     {
         current->pos.x += current->dir.x * SLOT_SIZE;
         current->pos.y += current->dir.y * SLOT_SIZE;
-        Vector2 tempDir = current->dir; //stick current direction in tempDir
+        Vector2 tempDir = current->dir;
         current->dir = tempPrevDir;
         tempPrevDir = tempDir;
     }
 
     if (snake->head->pos.x < 0)
-    {
         snake->head->pos.x = screenWidth - SLOT_SIZE;
-    }
 
     if (snake->head->pos.x > screenWidth)
-    {
         snake->head->pos.x = 0;
-    }
 
     if (snake->head->pos.y < 0)
-    {
         snake->head->pos.y = screenHeight - SLOT_SIZE;
-    }
 
     if (snake->head->pos.y > screenHeight)
-    {
         snake->head->pos.y = 0;
-    }
 
     bool gameOver = CheckCollision(snake);
     printf("%d\n", gameOver);
 }
+
 
 void DrawSnake(Snake* snake)
 {

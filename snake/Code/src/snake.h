@@ -3,7 +3,10 @@
 
 #include <raylib.h>
 
-#define SLOT_SIZE 64
+#define SLOT_SIZE 32
+
+#define WIDTH 1280
+#define HEIGHT 960
 
 #define HEAD_TEXTURE "./Assets/snake_head_minecraft.png"
 #define BODY_TEXTURE "./Assets/snake_body_minecraft.png"
