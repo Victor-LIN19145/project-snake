@@ -1,173 +1,165 @@
-#include <stddef.h>
 #include <stdlib.h>
-#include <stdbool.h>
-#include <stdio.h>
+#include <raylib.h>
+#include <time.h>
 
 #include "snake.h"
 #include "game.h"
 
-// Function to create a new snake segment
-Snake* CreateSnake()
+Snake* InitSnake()
 {
-    Snake* createSnake = calloc(1, sizeof(Snake)); // Allocate 1 memory in Snake struct
-    if (createSnake == NULL)
-		return NULL;
-	
-	return createSnake;
-}
-
-//Function to change the texture of a snake segment
-void ChangeSegmentTexture(SnakeSegment* seg, char* texture)
-{
-    if (seg == NULL || texture == NULL)
-        return;
-
-    Image img = LoadImage(texture);
-    ImageResize(&img, SLOT_SIZE, SLOT_SIZE);
-    Texture2D newTexture = LoadTextureFromImage(img);
-    seg->texture = newTexture;
-    UnloadImage(img);
-}
-
-//Function to initialize a snake segment
-void InitSegment(SnakeSegment* seg, SnakeSegment* next, SnakeSegment* prev)
-{
-    // seg: segment
-    
-    if (seg == NULL)
-        return;
-        
-    seg->next = next;
-    seg->prev = prev;
-    if (seg->next == NULL)
-    {
-        ChangeSegmentTexture(seg, TAIL_TEXTURE_D);
-        seg->dir = prev->dir;
-        seg->pos = (Vector2){ prev->pos.x - seg->dir.x, prev->pos.y - seg->dir.y };
-    }
-    else if (seg->prev == NULL)
-    {
-        ChangeSegmentTexture(seg, HEAD_TEXTURE_D);
-        seg->dir = (Vector2){ 32, 0 };
-        seg->pos = (Vector2){ 32, 3 };
-    }
-    else
-    {
-        ChangeSegmentTexture(seg, BODY_TEXTURE_D);
-        seg->dir = prev->dir;
-        seg->pos = (Vector2){ prev->pos.x - seg->dir.x, prev->pos.y - seg->dir.y };
-    }
-}
-
-// Function to initialize the position and direction vectors for the snake
-void InitSnake(Snake *snake)
-{
-    if (snake == NULL)
-        return;
-
+    Snake* snake = calloc(1,sizeof(Snake));
     snake->size = 3;
-	snake->head = NULL;
-	snake->tail = NULL;
+    snake->speed = 0;
+    snake->head = NULL;
+    snake->tail = NULL;
+    snake->moveAllow = true;
 
-    SnakeSegment *headSegment = calloc(1, sizeof(SnakeSegment));
-    SnakeSegment *bodySegment = calloc(1, sizeof(SnakeSegment));
-    SnakeSegment *tailSegment = calloc(1, sizeof(SnakeSegment));
+    Segment* headSegment = calloc(1,sizeof(Segment));
+    Segment* bodySegment = calloc(1,sizeof(Segment));
+    Segment* tailSegment = calloc(1,sizeof(Segment));
 
-    InitSegment(headSegment, bodySegment, NULL);
-    InitSegment(bodySegment, tailSegment, headSegment);
-    InitSegment(tailSegment, NULL, bodySegment);
+    InitSegment(headSegment, NULL);
+    InitSegment(bodySegment, headSegment);
+    InitSegment(tailSegment, bodySegment);
 
     snake->head = headSegment;
     snake->tail = tailSegment;
+
+    return snake;
 }
 
-void MoveSnake(Snake* snake)
-{   
-    if (snake == NULL)
-        return;
-
-    if (IsKeyPressed(KEY_RIGHT) && snake->head->dir.x!= -32) // key R and direction is not left
-        snake->head->dir = (Vector2){ 32, 0 }; // Move right
-
-    else if (IsKeyPressed(KEY_LEFT) && snake->head->dir.x!= 32) // key L and direction is not right
-        snake->head->dir = (Vector2){ -32, 0 }; // Move left
-
-    if (IsKeyPressed(KEY_UP) && snake->head->dir.y!= 32) // key D and direction is not up
-        snake->head->dir = (Vector2){ 0, -32 };
-
-    else if (IsKeyPressed(KEY_DOWN) && snake->head->dir.y!= -32)
-        snake->head->dir = (Vector2){ 0, 32 };
-}
-
-void AddSegment(Snake* snake)
+void InitSegment(Segment* body, Segment* head)
 {
-    if (snake == NULL)
-        return;
-
-    SnakeSegment* createSegment = calloc(1, sizeof(SnakeSegment));
-    if (createSegment == NULL)
-		return;
-
-    InitSegment(createSegment, NULL, snake->tail);
-    if (snake->tail == NULL)
+    body->prev = head;
+    body->next = NULL;
+    
+    if (body->prev == NULL)
     {
-        snake->tail = createSegment;
+        body->position = (Vector2){128, 128};
+        body->direction = (Vector2){32,0};
+    }   
+    else
+    {
+        head->next = body;
+        body->position = (Vector2){head->position.x - head->direction.x,head->position.y - head->direction.y};
+        body->direction =  (Vector2){head->direction.x ,head->direction.y};
     }
 }
 
-bool CheckCollision(Snake* snake)
+void DrawSnake(Game* game)
 {
-    if (snake == NULL)
-        return false;
-
-    for ( SnakeSegment* current = snake->head; current != NULL; current = current->next)
+    for (Segment* current = game->snake->head
+        ; current != NULL
+            ; current = current->next)
     {
-        if (current != snake->head && (current->pos.x == snake->head->pos.x && current->pos.y == snake->head->pos.y))
-            return true;
+        
+        if (current->prev == NULL)
+        {
+            DrawTexture(game->assets->gameTexture[0],
+                current->position.x, current->position.y,WHITE);
+        }
+        else if (current->next == NULL)
+        {
+            DrawTexture(game->assets->gameTexture[2],
+                current->position.x, current->position.y,WHITE);
+        }
+        else
+        {
+            DrawTexture(game->assets->gameTexture[1],
+                current->position.x, current->position.y,WHITE);
+        }
     }
-    return false;
 }
 
 void UpdateSnake(Snake* snake)
 {
-    if (snake == NULL)
-        return;
-
-    MoveSnake(snake);
-
-    SnakeSegment* current =snake->tail;
-    for (;current->prev != NULL; current = current->prev )
+    snake->moveAllow = true;
+    Segment* current = snake->tail;
+    for (; current->prev != NULL; current = current->prev)
     {
-        current->pos = current->prev->pos;
-        current->dir = current->prev->dir;
+        current->position = current->prev->position;
+        current->direction = current->prev->direction;
     }
-    snake->head->pos.x =snake->head->pos.x+ snake->head->dir.x;
-    snake->head->pos.y =snake->head->pos.y+ snake->head->dir.y;
 
-    if (snake->head->pos.x < 0)
-        snake->head->pos.x = WIDTH - SLOT_SIZE;
+    snake->head->position.x =
+        snake->head->position.x + snake->head->direction.x;
+    snake->head->position.y =
+        snake->head->position.y + snake->head->direction.y;
+}
 
-    if (snake->head->pos.x > WIDTH)
-        snake->head->pos.x = 0;
+void SnakeMove(Snake* snake) 
+{
+    if (IsKeyPressed(KEY_UP) && snake->head->direction.y != 32
+        && snake->moveAllow == true)
+    {
+        snake->moveAllow = false;
+        snake->head->direction = (Vector2) {0, -32};
+    }
 
-    if (snake->head->pos.y < 0)
-        snake->head->pos.y = HEIGHT - SLOT_SIZE;
+    if (IsKeyPressed(KEY_DOWN) && snake->head->direction.y != -32
+        && snake->moveAllow == true)
+    {
+        snake->moveAllow = false;
+        snake->head->direction = (Vector2) {0, 32};
+    }
 
-    if (snake->head->pos.y > HEIGHT)
-        snake->head->pos.y = 0;
+    if(IsKeyPressed(KEY_RIGHT) && snake->head->direction.x != -32
+        && snake->moveAllow == true)
+    {
+        snake->moveAllow = false;
+        snake->head->direction = (Vector2){32,0};
+    }
+    
+    if(IsKeyPressed(KEY_LEFT) && snake->head->direction.x != 32
+        && snake->moveAllow == true)
+    {
+        snake->moveAllow = false;
+        snake->head->direction = (Vector2){-32,0};
+    }
+}
 
-    bool gameOver = CheckCollision(snake);
-    printf("%d\n", gameOver);
+bool CheckBodyCollision(Game* game)
+{
+    for (Segment* current = game->snake->head->next;
+        current != NULL;
+            current = current->next)
+    {
+        if (current->position.x == game->snake->head->position.x
+            && current->position.y == game->snake->head->position.y) 
+                return false;
+    }
+    return true;
+}
+
+void AddSegment(Game* game)
+{
+    Segment *bodySegment = calloc(1,sizeof(Segment));
+    InitSegment(bodySegment,game->snake->tail);
+    game->snake->tail = bodySegment;
 }
 
 
-void DrawSnake(Snake* snake)
+void BorderCollision(Game* game)
 {
-    if (snake == NULL)
-        return;
+    if (game->snake->head->position.x >= 1280
+        || game->snake->head->position.x < 0
+            || game->snake->head->position.y >= 640
+                || game->snake->head->position.y < 0)
+                    game->gameState = GAME_OVER;
+}
 
-    for ( SnakeSegment* current = snake->head; current != NULL; current = current->next)
-    {
-        DrawTexture(current->texture, current->pos.x, current->pos.y, WHITE);
-    }
+void SnakeDestroy(Snake** snake)
+{
+	if (snake == NULL|| *snake == NULL) return;
+
+	Segment* next = (*snake)->head;
+	while (next != NULL)
+	{
+		Segment* segment = next;
+		next = segment->next;
+		free(segment);
+	}
+
+	free(*snake);
+	*snake = NULL;
 }

@@ -1,53 +1,68 @@
 #include <raylib.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 #include "snake.h"
 #include "game.h"
+#include "food.h"
 
-//------------------------------------------------------------------------------------
-// Program main entry point
-//------------------------------------------------------------------------------------
-int main()
+/*
+1	32
+2	64
+3	96
+4	128
+5	160
+6	192
+7	224
+8	256
+9	288
+10	320
+11	352
+12	384
+13	416
+14	448
+15	480
+16	512
+17	544
+18	576
+19	608
+20	640
+21	672
+22	704
+23	736
+24	768
+25	800
+26	832
+27	864
+28	896
+29	928
+30	960
+*/
+
+int main(void)
 {
-    // Initialization
-    //--------------------------------------------------------------------------------------
+    InitWindow(GAME_WIDTH, GAME_HEIGHT, "Snake Game Victor LIN");
 
-    Color green = { 144, 200, 144, 255};
+    Game* game = InitGame(); 
 
-    InitWindow(WIDTH, HEIGHT, "Snake Victor LIN");
+    SetTargetFPS(60);
 
-    Snake* snake = CreateSnake();
-    InitSnake(snake);
-    Game* game = CreateGame();
-    InitGame(game);
-
-    SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
-    //--------------------------------------------------------------------------------------
-
-    // Main game loop
-    while (!WindowShouldClose())    // Detect window close button or ESC key
+    while (!WindowShouldClose() && game->run == true)
     {
-        // Update
-        //----------------------------------------------------------------------------------
-        UpdateSnake(snake);
-        // TODO: Update your variables here
-        //----------------------------------------------------------------------------------
+        
+        GameUpdate(game);
 
-        // Draw
-        //----------------------------------------------------------------------------------
         BeginDrawing();
 
-            ClearBackground(green);
-            DrawSnake(snake);
-            DrawText("Congrats! You created your first window!", 190, 200, 20, LIGHTGRAY);
-
+            ClearBackground(RAYWHITE);
+            DrawGame(game);
+            
         EndDrawing();
-        //----------------------------------------------------------------------------------
     }
 
-    // De-Initialization
-    //--------------------------------------------------------------------------------------
-    CloseWindow();        // Close window and OpenGL context
-    //--------------------------------------------------------------------------------------
+    UnLoad(game);
+    CloseWindow();
 
     return 0;
 }
+
