@@ -1,8 +1,10 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <raylib.h>
+#include <stdbool.h>
+#include <stdio.h>
 
-#include <include/snake.h>
+#include "snake.h"
 
 // Function to create a new snake segment
 Snake* CreateSnake()
@@ -10,23 +12,20 @@ Snake* CreateSnake()
     Snake* createSnake = calloc(1, sizeof(Snake)); // Allocate 1 memory in Snake struct
     if (createSnake == NULL)
 		return NULL;
-
-    createSnake->size = 0;
-	createSnake->head = NULL;
-	createSnake->tail = NULL;
 	
 	return createSnake; 
 }
 
 //Function to change the texture of a snake segment
-void ChangeSegmentTexture(SnakeSegment* segment, char* texture)
+void ChangeSegmentTexture(SnakeSegment* seg, char* texture)
 {
-    if (segment == NULL || texture == NULL)
+    if (seg == NULL || texture == NULL)
         return;
 
     Image img = LoadImage(texture);
     ImageResize(&img, SLOT_SIZE, SLOT_SIZE);
-    segment->texture = LoadTextureFromImage(img);
+    Texture2D newTexture = LoadTextureFromImage(img);
+    seg->texture = newTexture;
     UnloadImage(img);
 }
 
@@ -37,15 +36,14 @@ void InitSegment(SnakeSegment* seg, SnakeSegment* next, SnakeSegment* prev)
     
     if (seg == NULL)
         return;
-
+        
     seg->next = next;
     seg->prev = prev;
     if (seg->next == NULL)
     {
         ChangeSegmentTexture(seg, TAIL_TEXTURE);
         seg->dir = prev->dir;
-        seg->pos = (Vector2){ prev->pos.x - seg->dir.x,
-            prev->pos.y - seg->dir.y };
+        seg->pos = (Vector2){ prev->pos.x - seg->dir.x, prev->pos.y - seg->dir.y };
     }
     else if (seg->prev == NULL)
     {
@@ -57,8 +55,7 @@ void InitSegment(SnakeSegment* seg, SnakeSegment* next, SnakeSegment* prev)
     {
         ChangeSegmentTexture(seg, BODY_TEXTURE);
         seg->dir = prev->dir;
-        seg->pos = (Vector2){ prev->pos.x - seg->dir.x,
-            prev->pos.y - seg->dir.y };
+        seg->pos = (Vector2){ prev->pos.x - seg->dir.x, prev->pos.y - seg->dir.y };
     }
 }
 
@@ -72,13 +69,9 @@ void InitSnake(Snake *snake)
 	snake->head = NULL;
 	snake->tail = NULL;
 
-
-    SnakeSegment *headSegment
-        = calloc(1, sizeof(SnakeSegment));
-    SnakeSegment *bodySegment
-        = calloc(1, sizeof(SnakeSegment));
-    SnakeSegment *tailSegment
-        = calloc(1, sizeof(SnakeSegment));
+    SnakeSegment *headSegment = calloc(1, sizeof(SnakeSegment));
+    SnakeSegment *bodySegment = calloc(1, sizeof(SnakeSegment));
+    SnakeSegment *tailSegment = calloc(1, sizeof(SnakeSegment));
 
     InitSegment(headSegment, bodySegment, NULL);
     InitSegment(bodySegment, tailSegment, headSegment);
@@ -86,7 +79,6 @@ void InitSnake(Snake *snake)
 
     snake->head = headSegment;
     snake->tail = tailSegment;
-
 }
 
 void MoveSnake(Snake* snake)
@@ -116,10 +108,12 @@ void AddSegment(Snake* snake)
     if (createSegment == NULL)
 		return;
 
-    InitSnake(createSegment);
-    snake->head = createSegment;
-    snake->tail = createSegment;
-
+    InitSegment(createSegment, NULL, snake->tail);
+    if (snake->tail == NULL)
+    {
+        snake->head = createSegment;
+        snake->tail = createSegment;
+    }
 }
 
 bool CheckCollision(Snake* snake)
@@ -127,24 +121,45 @@ bool CheckCollision(Snake* snake)
     if (snake == NULL)
         return false;
 
-    SnakeSegment* current = snake->head;
-    SnakeSegment* next;
-
-    while (current!= NULL)
-    
-
+    for ( SnakeSegment* current = snake->head; current != NULL; current = current->next)
+    {
+        if (current != snake->head && (current->pos.x == snake->head->pos.x && current->pos.y == snake->head->pos.y))
+            return true;
+    }
+    return false;
 }
 
 void UpdateSnake(Snake* snake)
 {
     if (snake == NULL)
         return;
+
+    MoveSnake(snake);
+
+    Vector2 tempPrevDir = snake->head->dir;
+
+    for ( SnakeSegment* current = snake->head; current != NULL; current = current->next)
+    {
+        current->pos.x += current->dir.x * SLOT_SIZE;
+        current->pos.y += current->dir.y * SLOT_SIZE;
+        Vector2 tempDir = current->dir; //stick current direction in tempDir
+        current->dir = tempPrevDir;
+        tempPrevDir = tempDir;
+    }
+
+    bool gameOver = CheckCollision(snake);
+    printf("%d\n", gameOver);
 }
 
 void DrawSnake(Snake* snake)
 {
     if (snake == NULL)
         return;
+
+    for ( SnakeSegment* current = snake->head; current != NULL; current = current->next)
+    {
+        DrawTexture(current->texture, current->pos.x, current->pos.y, WHITE);
+    }
 }
 
 // Function to destroy the snake and free memory

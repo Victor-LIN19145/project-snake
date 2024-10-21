@@ -28,9 +28,9 @@ typedef struct SSnake
 
 Snake* CreateSnake();
 
-void ChangeSegmentTexture(SnakeSegment* segment, char* texture);
+void ChangeSegmentTexture(SnakeSegment* seg, char* texture);
 
-void InitSegment(SnakeSegment* segment, SnakeSegment* next, SnakeSegment* prev);
+void InitSegment(SnakeSegment* seg, SnakeSegment* next, SnakeSegment* prev);
 
 void InitSnake(Snake* snake);
 

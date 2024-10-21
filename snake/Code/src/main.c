@@ -12,11 +12,14 @@ int main(void)
     const int screenWidth = 1280;
     const int screenHeight = 960;
 
-    Color green = { 144, 200, 144, 0};
+    Color green = { 144, 200, 144, 255};
 
     InitWindow(screenWidth, screenHeight, "Snake Victor LIN");
 
-    SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
+    Snake* snake = CreateSnake();
+    InitSnake(snake);
+
+    SetTargetFPS(1);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
 
     // Main game loop
@@ -24,7 +27,7 @@ int main(void)
     {
         // Update
         //----------------------------------------------------------------------------------
-
+        UpdateSnake(snake);
         // TODO: Update your variables here
         //----------------------------------------------------------------------------------
 
@@ -33,7 +36,7 @@ int main(void)
         BeginDrawing();
 
             ClearBackground(green);
-
+            DrawSnake(snake);
             DrawText("Congrats! You created your first window!", 190, 200, 20, LIGHTGRAY);
 
         EndDrawing();
