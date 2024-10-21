@@ -19,7 +19,7 @@ int main(void)
     Snake* snake = CreateSnake();
     InitSnake(snake);
 
-    SetTargetFPS(1);               // Set our game to run at 60 frames-per-second
+    SetTargetFPS(10);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
 
     // Main game loop
@@ -36,6 +36,7 @@ int main(void)
         BeginDrawing();
 
             ClearBackground(green);
+            DrawGrid(screenWidth, screenHeight);
             DrawSnake(snake);
             DrawText("Congrats! You created your first window!", 190, 200, 20, LIGHTGRAY);
 

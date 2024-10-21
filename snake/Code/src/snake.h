@@ -3,7 +3,7 @@
 
 #include <raylib.h>
 
-#define SLOT_SIZE 64
+#define SLOT_SIZE 32
 
 #define HEAD_TEXTURE "./Assets/snake_head.png"
 #define BODY_TEXTURE "./Assets/snake_body.png"
@@ -43,7 +43,5 @@ bool CheckCollision(Snake* snake);
 void UpdateSnake(Snake* snake);
 
 void DrawSnake(Snake* snake);
-
-void DestroySnake(Snake** snake);
 
 #endif

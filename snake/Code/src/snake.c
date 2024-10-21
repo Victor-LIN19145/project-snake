@@ -86,17 +86,17 @@ void MoveSnake(Snake* snake)
     if (snake == NULL)
         return;
 
-    if (IsKeyPressed(KEY_RIGHT) && snake->head->dir.x!= -1)
-        snake->head->dir = (Vector2){ 1, 0 };
+    if (IsKeyPressed(KEY_RIGHT) && snake->head->dir.x!= -1) // key R and direction is not left
+        snake->head->dir = (Vector2){ 1, 0 }; // Move right
 
-    else if (IsKeyPressed(KEY_LEFT) && snake->head->dir.x!= 1)
-        snake->head->dir = (Vector2){ -1, 0 };
+    else if (IsKeyPressed(KEY_LEFT) && snake->head->dir.x!= 1) // key L and direction is not right
+        snake->head->dir = (Vector2){ -1, 0 }; // Move left
 
-    if (IsKeyPressed(KEY_UP) && snake->head->dir.y!= 1)
-        snake->head->dir = (Vector2){ 0, 1 };
+    if (IsKeyPressed(KEY_UP) && snake->head->dir.y!= 1) // key D and direction is not up
+        snake->head->dir = (Vector2){ 0, -1 };
 
     else if (IsKeyPressed(KEY_DOWN) && snake->head->dir.y!= -1)
-        snake->head->dir = (Vector2){ 0, -1 };
+        snake->head->dir = (Vector2){ 0, 1 };
 }
 
 void AddSegment(Snake* snake)
@@ -123,7 +123,7 @@ bool CheckCollision(Snake* snake)
 
     for ( SnakeSegment* current = snake->head; current != NULL; current = current->next)
     {
-        if (current != snake->head && (current->pos.x == snake->head->pos.x && current->pos.y == snake->head->pos.y))
+        if (current != snake->head && (current->pos.x == snake->head->pos.x&& current->pos.y == snake->head->pos.y))
             return true;
     }
     return false;
@@ -160,18 +160,4 @@ void DrawSnake(Snake* snake)
     {
         DrawTexture(current->texture, current->pos.x, current->pos.y, WHITE);
     }
-}
-
-// Function to destroy the snake and free memory
-void DestroySnake(Snake** snake)
-{
-    if (snake == NULL|| *snake == NULL)
-		return;
-}
-
-//draw body 
-void SnakeDraw(Snake* snake)
-{
-    if (snake == NULL)
-        return;
 }
