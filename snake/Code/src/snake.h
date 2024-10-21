@@ -8,6 +8,10 @@
 #define WIDTH 1280
 #define HEIGHT 960
 
+#define HEAD_TEXTURE_D "./Assets/snake_head_default.png"
+#define BODY_TEXTURE_D "./Assets/snake_body_default.png"
+#define TAIL_TEXTURE_D "./Assets/snake_tail_default.png"
+
 #define HEAD_TEXTURE "./Assets/snake_head_minecraft.png"
 #define BODY_TEXTURE "./Assets/snake_body_minecraft.png"
 #define TAIL_TEXTURE "./Assets/snake_tail_minecraft.png"

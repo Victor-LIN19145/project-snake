@@ -1,6 +1,7 @@
+#include <stddef.h>
+
 #include "snake.h"
 #include "game.h"
-#include <stddef.h>
 
 /*
 Game* CreateGame()
@@ -21,3 +22,9 @@ void UpdateGame(Game* game)
         game->paused = !game->paused;
 }
 */
+
+void DrawApple(Apple* apple)
+{
+    GetRandomValue(1280, 960);
+
+}

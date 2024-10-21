@@ -1,6 +1,5 @@
 #include <stddef.h>
 #include <stdlib.h>
-#include <raylib.h>
 #include <stdbool.h>
 #include <stdio.h>
 
@@ -13,7 +12,7 @@ Snake* CreateSnake()
     if (createSnake == NULL)
 		return NULL;
 	
-	return createSnake; 
+	return createSnake;
 }
 
 //Function to change the texture of a snake segment
@@ -41,19 +40,19 @@ void InitSegment(SnakeSegment* seg, SnakeSegment* next, SnakeSegment* prev)
     seg->prev = prev;
     if (seg->next == NULL)
     {
-        ChangeSegmentTexture(seg, TAIL_TEXTURE);
+        ChangeSegmentTexture(seg, TAIL_TEXTURE_D);
         seg->dir = prev->dir;
         seg->pos = (Vector2){ prev->pos.x - seg->dir.x, prev->pos.y - seg->dir.y };
     }
     else if (seg->prev == NULL)
     {
-        ChangeSegmentTexture(seg, HEAD_TEXTURE);
-        seg->dir = (Vector2){ 1, 0 };
-        seg->pos = (Vector2){ 1, 0 };
+        ChangeSegmentTexture(seg, HEAD_TEXTURE_D);
+        seg->dir = (Vector2){ 32, 0 };
+        seg->pos = (Vector2){ 32, 3 };
     }
     else
     {
-        ChangeSegmentTexture(seg, BODY_TEXTURE);
+        ChangeSegmentTexture(seg, BODY_TEXTURE_D);
         seg->dir = prev->dir;
         seg->pos = (Vector2){ prev->pos.x - seg->dir.x, prev->pos.y - seg->dir.y };
     }
@@ -86,17 +85,17 @@ void MoveSnake(Snake* snake)
     if (snake == NULL)
         return;
 
-    if (IsKeyPressed(KEY_RIGHT) && snake->head->dir.x!= -1) // key R and direction is not left
-        snake->head->dir = (Vector2){ 1, 0 }; // Move right
+    if (IsKeyPressed(KEY_RIGHT) && snake->head->dir.x!= -32) // key R and direction is not left
+        snake->head->dir = (Vector2){ 32, 0 }; // Move right
 
-    else if (IsKeyPressed(KEY_LEFT) && snake->head->dir.x!= 1) // key L and direction is not right
-        snake->head->dir = (Vector2){ -1, 0 }; // Move left
+    else if (IsKeyPressed(KEY_LEFT) && snake->head->dir.x!= 32) // key L and direction is not right
+        snake->head->dir = (Vector2){ -32, 0 }; // Move left
 
-    if (IsKeyPressed(KEY_UP) && snake->head->dir.y!= 1) // key D and direction is not up
-        snake->head->dir = (Vector2){ 0, -1 };
+    if (IsKeyPressed(KEY_UP) && snake->head->dir.y!= 32) // key D and direction is not up
+        snake->head->dir = (Vector2){ 0, -32 };
 
-    else if (IsKeyPressed(KEY_DOWN) && snake->head->dir.y!= -1)
-        snake->head->dir = (Vector2){ 0, 1 };
+    else if (IsKeyPressed(KEY_DOWN) && snake->head->dir.y!= -32)
+        snake->head->dir = (Vector2){ 0, 32 };
 }
 
 void AddSegment(Snake* snake)
@@ -111,7 +110,6 @@ void AddSegment(Snake* snake)
     InitSegment(createSegment, NULL, snake->tail);
     if (snake->tail == NULL)
     {
-        snake->head = createSegment;
         snake->tail = createSegment;
     }
 }
@@ -123,7 +121,7 @@ bool CheckCollision(Snake* snake)
 
     for ( SnakeSegment* current = snake->head; current != NULL; current = current->next)
     {
-        if (current != snake->head && (current->pos.x == snake->head->pos.x&& current->pos.y == snake->head->pos.y))
+        if (current != snake->head && (current->pos.x == snake->head->pos.x && current->pos.y == snake->head->pos.y))
             return true;
     }
     return false;
@@ -136,29 +134,25 @@ void UpdateSnake(Snake* snake)
 
     MoveSnake(snake);
 
-    Vector2 tempPrevDir = snake->head->dir;
-
-    const int screenWidth = 1280;
-    const int screenHeight = 960;
-    for (SnakeSegment* current = snake->head; current != NULL; current = current->next)
+    SnakeSegment* current =snake->tail;
+    for (;current->prev != NULL; current = current->prev )
     {
-        current->pos.x += current->dir.x * SLOT_SIZE;
-        current->pos.y += current->dir.y * SLOT_SIZE;
-        Vector2 tempDir = current->dir;
-        current->dir = tempPrevDir;
-        tempPrevDir = tempDir;
+        current->pos = current->prev->pos;
+        current->dir = current->prev->dir;
     }
+    snake->head->pos.x =snake->head->pos.x+ snake->head->dir.x;
+    snake->head->pos.y =snake->head->pos.y+ snake->head->dir.y;
 
     if (snake->head->pos.x < 0)
-        snake->head->pos.x = screenWidth - SLOT_SIZE;
+        snake->head->pos.x = WIDTH - SLOT_SIZE;
 
-    if (snake->head->pos.x > screenWidth)
+    if (snake->head->pos.x > WIDTH)
         snake->head->pos.x = 0;
 
     if (snake->head->pos.y < 0)
-        snake->head->pos.y = screenHeight - SLOT_SIZE;
+        snake->head->pos.y = HEIGHT - SLOT_SIZE;
 
-    if (snake->head->pos.y > screenHeight)
+    if (snake->head->pos.y > HEIGHT)
         snake->head->pos.y = 0;
 
     bool gameOver = CheckCollision(snake);

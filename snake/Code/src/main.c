@@ -10,12 +10,10 @@ int main(void)
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 1280;
-    const int screenHeight = 960;
 
     Color green = { 144, 200, 144, 255};
 
-    InitWindow(screenWidth, screenHeight, "Snake Victor LIN");
+    InitWindow(WIDTH, HEIGHT, "Snake Victor LIN");
 
     Snake* snake = CreateSnake();
     InitSnake(snake);
@@ -23,7 +21,7 @@ int main(void)
     //DrawGrid(game);
     AddSegment(snake);
 
-    SetTargetFPS(10);               // Set our game to run at 60 frames-per-second
+    SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
 
     // Main game loop
