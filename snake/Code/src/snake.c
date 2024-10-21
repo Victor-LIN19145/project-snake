@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <raylib.h>
 
-#include "../include/snake.h"
+#include <include/snake.h>
 
 // Function to create a new snake segment
 Snake* CreateSnake()
