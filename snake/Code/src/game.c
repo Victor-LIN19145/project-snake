@@ -254,6 +254,7 @@ void DrawGameOver(Game* game)
 }
 void DrawGame(Game* game)
 {
+    DrawGameScreen(game);
     DrawGameMenu(game);
     DrawGameSetting(game);
     DrawGameOver(game);
