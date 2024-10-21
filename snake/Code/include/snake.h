@@ -34,8 +34,16 @@ void InitSegment(SnakeSegment* segment, SnakeSegment* next, SnakeSegment* prev);
 
 void InitSnake(Snake* snake);
 
-void DestroySnake(Snake** snake);
-
 void MoveSnake(Snake* snake);
+
+void AddSegment(Snake* snake);
+
+bool CheckCollision(Snake* snake);
+
+void UpdateSnake(Snake* snake);
+
+void DrawSnake(Snake* snake);
+
+void DestroySnake(Snake** snake);
 
 #endif

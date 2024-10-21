@@ -14,12 +14,7 @@ int main(void)
 
     Color green = { 144, 200, 144, 0};
 
-    InitWindow(screenWidth, screenHeight, "Snake Demo Victor LIN");
-
-    // Ajouter par Victor LIN
-    //--------------------------------------------------------------------------------------
-    Snake* snake = CreateSnake();
-    InitSnake(snake);
+    InitWindow(screenWidth, screenHeight, "Snake Victor LIN");
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -29,6 +24,7 @@ int main(void)
     {
         // Update
         //----------------------------------------------------------------------------------
+
         // TODO: Update your variables here
         //----------------------------------------------------------------------------------
 
