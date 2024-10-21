@@ -3,11 +3,11 @@
 
 #include <raylib.h>
 
-#define SLOT_SIZE 32
+#define SLOT_SIZE 64
 
-#define HEAD_TEXTURE "./Assets/snake_head.png"
-#define BODY_TEXTURE "./Assets/snake_body.png"
-#define TAIL_TEXTURE "./Assets/snake_tail.png"
+#define HEAD_TEXTURE "./Assets/snake_head_minecraft.png"
+#define BODY_TEXTURE "./Assets/snake_body_minecraft.png"
+#define TAIL_TEXTURE "./Assets/snake_tail_minecraft.png"
 
 typedef struct SSnakeSegment
 {

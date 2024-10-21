@@ -18,6 +18,7 @@ int main(void)
 
     Snake* snake = CreateSnake();
     InitSnake(snake);
+    AddSegment(snake);
 
     SetTargetFPS(10);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
