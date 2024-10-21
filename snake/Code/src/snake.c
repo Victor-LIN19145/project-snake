@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <raylib.h>
-#include <time.h>
 
 #include "snake.h"
 #include "game.h"
@@ -87,7 +86,7 @@ void UpdateSnake(Snake* snake)
         snake->head->position.y + snake->head->direction.y;
 }
 
-void SnakeMove(Snake* snake) 
+void SnakeMoveArrow(Snake* snake) 
 {
     if (IsKeyPressed(KEY_UP) && snake->head->direction.y != 32
         && snake->moveAllow == true)
@@ -118,6 +117,37 @@ void SnakeMove(Snake* snake)
     }
 }
 
+void SnakeMoveTouch(Snake* snake) 
+{
+    if (IsKeyPressed(KEY_W) && snake->head->direction.y != 32
+        && snake->moveAllow == true)
+    {
+        snake->moveAllow = false;
+        snake->head->direction = (Vector2) {0, -32};
+    }
+
+    if (IsKeyPressed(KEY_S) && snake->head->direction.y != -32
+        && snake->moveAllow == true)
+    {
+        snake->moveAllow = false;
+        snake->head->direction = (Vector2) {0, 32};
+    }
+
+    if(IsKeyPressed(KEY_D) && snake->head->direction.x != -32
+        && snake->moveAllow == true)
+    {
+        snake->moveAllow = false;
+        snake->head->direction = (Vector2){32,0};
+    }
+    
+    if(IsKeyPressed(KEY_A) && snake->head->direction.x != 32
+        && snake->moveAllow == true)
+    {
+        snake->moveAllow = false;
+        snake->head->direction = (Vector2){-32,0};
+    }
+}
+
 bool CheckBodyCollision(Game* game)
 {
     for (Segment* current = game->snake->head->next;
@@ -126,7 +156,7 @@ bool CheckBodyCollision(Game* game)
     {
         if (current->position.x == game->snake->head->position.x
             && current->position.y == game->snake->head->position.y) 
-                return false;
+                game->gameState = GAME_OVER;
     }
     return true;
 }
